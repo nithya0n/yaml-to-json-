@@ -1,0 +1,84 @@
+name: Working Dirs & Shells
+
+on: [push]
+
+# Default shell for all jobs (can be overridden per job)
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # -------------------------------
+  # Ubuntu Job
+  # -------------------------------
+  display-wd-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Display Working Directory & List Files
+        run: |
+          echo "=== Ubuntu Runner Info ==="
+          pwd
+          ls -a
+          echo "Commit SHA: $GITHUB_SHA"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Workspace: $GITHUB_WORKSPACE"
+
+      - name: Change Working Dir
+        working-directory: /home/runner
+        run: |
+          echo "Changed Directory:"
+          pwd
+
+  # -------------------------------
+  # Windows Job
+  # -------------------------------
+  display-wd-info-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Display Working Directory & List Files
+        run: |
+          Write-Host "=== Windows Runner Info ==="
+          Get-Location
+          dir
+          Write-Host "Commit SHA: $env:GITHUB_SHA"
+          Write-Host "Repository: $env:GITHUB_REPOSITORY"
+          Write-Host "Workspace: $env:GITHUB_WORKSPACE"
+
+      - name: Run Python Shell
+        shell: python
+        run: |
+          import platform
+          print("=== Python Info ===")
+          print("Processor:", platform.processor())
+          print("System:", platform.system())
+          print("Version:", platform.version())
+
+  # -------------------------------
+  # macOS Job
+  # -------------------------------
+  display-wd-info-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Display Working Directory & List Files
+        run: |
+          echo "=== macOS Runner Info ==="
+          pwd
+          ls -a
+          echo "Commit SHA: $GITHUB_SHA"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Workspace: $GITHUB_WORKSPACE"
+
+      - name: View macOS System Info
+        run: sw_vers
