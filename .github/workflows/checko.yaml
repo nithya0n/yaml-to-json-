@@ -1,0 +1,38 @@
+name: checkout normal
+
+on: [push]
+
+jobs:
+  # -------------------------------
+  # Job 1: Automatic checkout using official action
+  # -------------------------------
+  checkout-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List files before checkout
+        run: ls -a
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: List files after checkout
+        run: ls -a
+
+  # -------------------------------
+  # Job 2: Manual checkout using git commands
+  # -------------------------------
+  checkout-and-display-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List files before checkout
+        run: ls -a
+
+      - name: Manual Git Checkout
+        run: |
+          git init
+          git remote add origin "https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git fetch origin
+          git checkout main
+
+      - name: List files after checkout
+        run: ls -a
