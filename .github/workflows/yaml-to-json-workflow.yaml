@@ -8,7 +8,6 @@ on:
 jobs:
   convert:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -23,3 +22,22 @@ jobs:
 
       - name: Convert YAML to JSON
         run: node convert.js
+
+  parallel-job-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: View macOS version
+        run: sw_vers
+
+  dependent-job:
+    runs-on: ubuntu-latest
+    needs: convert      # This job runs **after convert** finishes
+    steps:
+      - name: Echo a string
+        run: echo "This is a dependent job"
+
+      - name: Error Step
+        run: doesnot-exist-command   # This will fail

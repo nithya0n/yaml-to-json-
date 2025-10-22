@@ -1,0 +1,12 @@
+{
+  "name": "Nithya",
+  "age": 25,
+  "skills": [
+    "coding",
+    "teaching"
+  ],
+  "numbers": 123,
+  "null": null,
+  "literal block": "firstline line\nsecontr loinmes\n\n\n\n\n\n",
+  "folded block": "firstline line secontr lo\n"
+}
