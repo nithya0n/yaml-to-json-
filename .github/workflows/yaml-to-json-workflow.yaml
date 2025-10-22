@@ -37,7 +37,7 @@ jobs:
     needs: convert      # This job runs **after convert** finishes
     steps:
       - name: Echo a string
-        run: echo "This is a dependent job"s
+        run: echo "This is a dependent job"
 
       - name: Error Step
-        run: doesnot-exist-command   # This will fail
+        run: doesnot-exist-commandss# This will fail
