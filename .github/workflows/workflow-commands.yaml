@@ -1,14 +1,33 @@
-name: Workflow commands
+name: Workflow Commands
+
 on: [push]
+
 jobs:
-    testing-wf-commands:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Setting an error message
-              run: echo "::error ::misisng semicolon"
-            - name: Setting an debug message with params
-              run: echo "::debug::Debug title,file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
-            - name: Setting an error message with params
-              run: echo "::warning ::warning title,file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
-            - name: Setting an notice message with params
-              run: echo "::error ::notice title,file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
+  testing-wf-commands:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setting an error message
+        run: echo "::error::Missing semicolon"
+
+      - name: Setting a debug message with params
+        run: echo "::debug file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
+
+      - name: Setting a warning message with params
+        run: echo "::warning file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
+
+      - name: Setting a notice message with params
+        run: echo "::notice file=app.js,line=2,endline=3,col=5,endColumn=7::Missing semicolon"
+
+      - name: Group of logs
+        run: |
+          echo "::group::My group title"
+          echo "Some log message 1"
+          echo "Some log message 2"
+          echo "::endgroup::"
+
+      - name: Masking a value
+        run: echo "::add-mask::logins error,debug,warning"
+
+      - name: Echo a secret
+        run: echo "Secret string"
