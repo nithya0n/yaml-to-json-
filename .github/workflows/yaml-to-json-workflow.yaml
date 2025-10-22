@@ -40,4 +40,4 @@ jobs:
         run: echo "This is a dependent job"
 
       - name: Error Step
-        run: doesnot-exist-commandss# This will fail
+        run: doesnot-exist-command   # This will fail
