@@ -2,16 +2,16 @@ name: Call Reusable Workflow
 on:
   workflow_dispatch:
     inputs:
-      environment:        # ← Change from "name" to "environment"
-        description: "Environment to deploy to"
+      name:                    # ← Change to "name" to match reusable
+        description: "Input description"
         type: string
-        default: "staging"
+        default: "Ali"
         required: false
 
 jobs:
   call-reusable:
     uses: nithya0n/workflow/.github/workflows/reusable.yaml@main
     with:
-      environment: ${{ inputs.environment }}    # ← Now this matches
+      name: ${{ inputs.name }}              # ← Change to "name"
     secrets:
-      access_token: ${{ secrets.ACCESS_TOKEN }}
+      access-token: ${{ secrets.ACCESS_TOKEN }}  # ← Change to HYPHEN
