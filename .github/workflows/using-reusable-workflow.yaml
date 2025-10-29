@@ -1,0 +1,17 @@
+name: Call Reusable Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Input description"
+        type: string
+        default: "Ali"
+        required: false
+
+jobs:
+  call-reusable:
+    uses: nithya0n/workflow/.github/workflows/reusable.yaml@main
+    with:
+      environment: ${{ inputs.name }}
+    secrets:
+      access_token: ${{ secrets.ACCESS_TOKEN }}
