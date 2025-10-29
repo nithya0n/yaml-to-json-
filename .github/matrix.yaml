@@ -1,46 +1,50 @@
 name: Matrix
 on: [push]
 
-#------- ORIGINAL --------#
-# X {os: ubuntu-latest, node-version: 14, is-ubuntu: true, experimental: false}
-# {os: ubuntu-latest, node-version: 15, is-ubuntu: true, experimental: false}
-# {os: ubuntu-latest, node-version: 16, is-ubuntu: true, experimental: true}
-# {os: windows-latest, node-version: 14, experimental: false}
-# {os: windows-latest, node-version: 15, experimental: false}
-# {os: windows-latest, node-version: 16, experimental: false}
-# {os: macos-latest, node-version: 15}
-# {os: ubuntu-latest, node-version: 17 }
-
 jobs:
   node-matrix:
+    # Use default value for 'experimental' if it's not explicitly set in the matrix
     continue-on-error: ${{ matrix.experimental == true }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [14, 15, 16]
+        experimental: [false] # <-- Set a default value for 'experimental'
+
         include:
-          - os: ubuntu-latest
-            is-ubuntu: true
-          - os: macos-latest
-            node-version: 15
-          - experimental: false
+          # Special case: Node 16 on Ubuntu is experimental
           - os: ubuntu-latest
             node-version: 16
             experimental: true
+          # Special case: Node 17 on Ubuntu
           - os: ubuntu-latest
             node-version: 17
+            experimental: false # Defaulting to false, override if needed
+          # Special case: is-ubuntu property for Ubuntu jobs
+          - os: ubuntu-latest
+            is-ubuntu: true
+
         exclude:
+          # Remove all macos-latest jobs from the base cross-product
+          - os: macos-latest
+          # Your original exclude
           - os: ubuntu-latest
             node-version: 14
+            
       fail-fast: true
-      # max-parallel: 3
+      
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v3
+
+      # This if condition will only run for the specific Ubuntu 16 job
       - if: matrix.experimental == true
         run: exit 1
-      - run: node -v
-      - run: echo '${{ toJson(matrix) }}'
-      - uses: actions/setup-node@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          
       - run: node -v
+      - run: echo '${{ toJson(matrix) }}'
