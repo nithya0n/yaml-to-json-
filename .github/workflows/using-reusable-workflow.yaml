@@ -1,17 +1,24 @@
-name: Call Reusable Workflow
+name: Calling Reusable Workflows
 on:
   workflow_dispatch:
     inputs:
-      name:                    # ← Change to "name" to match reusable
+      name:
         description: "Input description"
         type: string
         default: "Ali"
         required: false
-
 jobs:
-  call-reusable:
+  calling-a-reusable-wf:
     uses: nithya0n/workflow/.github/workflows/reusable.yaml@main
     with:
-      name: ${{ inputs.name }}              # ← Change to "name"
+      name: ${{ inputs.name }}
     secrets:
-      access-token: ${{ secrets.ACCESS_TOKEN }}  # ← Change to HYPHEN
+      access-token: ${{ secrets.ACCESS_TOKEN }}
+  calling-a-reusable-wf-in-the-same-repo:
+    uses: ./.github/workflows/reusable.yaml
+    secrets: inherit
+  using-reusable-wf-output:
+    runs-on: ubuntu-latest
+    needs: calling-a-reusable-wf-in-the-same-repo
+    steps:
+      - run: echo ${{ needs.calling-a-reusable-wf-in-the-same-repo.outputs.date }}
