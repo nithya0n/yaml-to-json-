@@ -6,66 +6,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # 1. Checkout code
-      - uses: actions/checkout@v4  # Also update this to latest
+      - uses: actions/checkout@v4
       
-      # 2. Setup Node.js (recommended addition)
+      # 2. Setup Node.js with built-in caching (SIMPLIFIED)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'npm'  # This handles caching automatically!
       
-      # 3. Cache node modules
-      - name: Cache node modules
-        id: cache-dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      
-      # 4. Display cache status
-      - name: Display Cache Output
-        run: |
-          echo "Cache hit: ${{ steps.cache-dependencies.outputs.cache-hit }}"
-          echo 'Cache outputs: ${{ toJSON(steps.cache-dependencies.outputs) }}'
-      
-      # 5. Install dependencies (only if cache missed)
+      # 3. Install dependencies (cache is handled by setup-node)
       - name: Install dependencies
-        if: steps.cache-dependencies.outputs.cache-hit != 'true'
-        run: npm ci  # Use npm ci for cleaner installs
+        run: npm ci
       
-      # 6. Run tests
+      # 4. Display node and npm info
+      - name: Display Environment Info
+        run: |
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Current directory: $(pwd)"
+          ls -la
+      
+      # 5. Run tests
       - name: Run Tests
         run: npm test
       
-      # 7. Upload coverage report (FIXED)
+      # 6. Upload coverage report (UPDATED)
       - name: Upload Code Coverage Report
-        uses: actions/upload-artifact@v4  # ← UPDATED
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: code-coverage-report
           path: coverage/
           retention-days: 10
       
-      # 8. Download and verify (FIXED)
+      # 7. Download and verify (UPDATED)
       - name: Download Code Coverage
-        uses: actions/download-artifact@v4  # ← UPDATED
+        uses: actions/download-artifact@v4
         with:
           name: code-coverage-report
           path: downloaded-coverage/
       
-      # 9. List files
+      # 8. List files
       - name: List downloaded files
         run: |
+          echo "=== Root Directory ==="
           ls -la
-          echo "--- Coverage Report ---"
+          echo "=== Coverage Report Directory ==="
           ls -la downloaded-coverage/
       
-      # 10. Use Axios for API call
+      # 9. Use Axios for API call
       - name: Use Axios
         uses: actions/github-script@v6
         with:
@@ -78,7 +68,7 @@ jobs:
                   'User-Agent': 'GitHub Actions Workflow' 
                 } 
               });
-              console.log('Dad Joke:', res.data);
+              console.log('🎭 Dad Joke:', res.data);
             } catch (error) {
-              console.error('API call failed:', error.message);
+              console.error('❌ API call failed:', error.message);
             }
