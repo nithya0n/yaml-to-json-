@@ -5,33 +5,27 @@ jobs:
   use-axios:
     runs-on: ubuntu-latest
     steps:
-      # 1. Checkout code
       - uses: actions/checkout@v4
       
-      # 2. Setup Node.js with built-in caching (SIMPLIFIED)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'  # This handles caching automatically!
+          cache: 'npm'
       
-      # 3. Install dependencies (cache is handled by setup-node)
+      # FIX: Use npm install instead of npm ci
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
-      # 4. Display node and npm info
-      - name: Display Environment Info
+      - name: Display package info
         run: |
-          echo "Node version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-          echo "Current directory: $(pwd)"
-          ls -la
+          echo "Node: $(node --version)"
+          echo "NPM: $(npm --version)"
+          echo "Dependencies installed successfully!"
       
-      # 5. Run tests
       - name: Run Tests
         run: npm test
       
-      # 6. Upload coverage report (UPDATED)
       - name: Upload Code Coverage Report
         uses: actions/upload-artifact@v4
         if: always()
@@ -40,35 +34,28 @@ jobs:
           path: coverage/
           retention-days: 10
       
-      # 7. Download and verify (UPDATED)
       - name: Download Code Coverage
         uses: actions/download-artifact@v4
         with:
           name: code-coverage-report
           path: downloaded-coverage/
       
-      # 8. List files
-      - name: List downloaded files
-        run: |
-          echo "=== Root Directory ==="
-          ls -la
-          echo "=== Coverage Report Directory ==="
-          ls -la downloaded-coverage/
+      - name: Verify download
+        run: ls -la downloaded-coverage/
       
-      # 9. Use Axios for API call
-      - name: Use Axios
+      - name: Use Axios for Dad Joke
         uses: actions/github-script@v6
         with:
           script: |
             const axios = require('axios');
             try {
-              const res = await axios.get('https://icanhazdadjoke.com/', { 
+              const response = await axios.get('https://icanhazdadjoke.com/', {
                 headers: { 
                   'Accept': 'text/plain',
-                  'User-Agent': 'GitHub Actions Workflow' 
-                } 
+                  'User-Agent': 'GitHub Actions Workflow'
+                }
               });
-              console.log('🎭 Dad Joke:', res.data);
+              console.log('😂 Dad Joke:', response.data);
             } catch (error) {
-              console.error('❌ API call failed:', error.message);
+              console.log('😞 No joke today:', error.message);
             }
